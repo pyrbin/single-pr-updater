@@ -4,7 +4,7 @@
   "private": true,
   "main": "src/main.ts",
   "scripts": {
-    "build": "ncc build src/main.ts --minify -o out",
+    "build": "ncc build src/main.ts -o out",
     "lint": "eslint . --cache",
     "lint:fix": "eslint --fix ."
   },
@@ -13,7 +13,6 @@
     "@actions/github": "^5.0.0",
     "@octokit/openapi-types": "^9.7.0",
     "@octokit/plugin-paginate-rest": "^2.15.1",
-    "@octokit/request": "^5.6.1",
     "@octokit/types": "^6.25.0"
   },
   "devDependencies": {
