@@ -1,0 +1,38 @@
+name: single-pr-updater
+
+description: Creates & updates a single pull request by given branch targets & label.
+
+author: pyrbin
+
+inputs:
+  head:
+    description: "Head branch name of pull request"
+    required: true
+  base:
+    description: "Base branch name of pull request"
+    required: true
+  label:
+    description: Label identifier
+    required: true
+  title:
+    description: Title of the pull request
+    required: true
+  body:
+    description: Body of the pull request
+    required: true
+  draft:
+    description: Created pull request should be a draft
+
+outputs:
+  id:
+    description: Pull request id
+  number:
+    description: Pull request number
+
+branding:
+  icon: "link-2"
+  color: "orange"
+
+runs:
+  using: node12
+  main: out/main.js
