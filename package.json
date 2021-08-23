@@ -1,10 +1,10 @@
 {
   "name": "single-pr-updater",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "main": "src/main.ts",
   "scripts": {
-    "build": "esbuild src/main.ts --minify --format=cjs --platform=node --target=node12 --outfile=out/main.js",
+    "build": "ncc build src/main.ts -o out",
     "lint": "eslint . --cache",
     "lint:fix": "eslint --fix ."
   },
@@ -20,7 +20,7 @@
     "@types/node": "^16.7.1",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
-    "esbuild": "^0.12.22",
+    "@vercel/ncc": "^0.29.2",
     "eslint": "^7.32.0",
     "typescript": "^4.3.5"
   }
