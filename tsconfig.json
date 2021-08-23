@@ -3,7 +3,7 @@
   "include": ["src/**/*.ts"],
   "compilerOptions": {
     "incremental": true,
-    "target": "esnext",
+    "target": "es2015",
     "module": "commonjs",
     "outDir": "./out",
     "moduleResolution": "node",
