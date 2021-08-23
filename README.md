@@ -14,7 +14,7 @@ jobs:
         id: release_drafter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: pyrbin/single-pr-updater@main
+      - uses: pyrbin/single-pr-updater@v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
