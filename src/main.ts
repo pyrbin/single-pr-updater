@@ -47,7 +47,8 @@ async function main() {
         const prs = prList.filter(x =>
           x.state === "closed" &&
           x.labels.find(l => l.name === inputs.label) &&
-          x.title === inputs.title);
+          x.head.ref.replace(/^refs\/heads\//, "") === inputs.head &&
+          x.base.ref.replace(/^refs\/heads\//, "") === inputs.base);
 
         if (prs.length <= 0 || prs[0]?.number == undefined) {
           core.info("No commits between base and head, cancelling operation");
