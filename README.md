@@ -23,7 +23,7 @@ jobs:
           base: main
           title: Release ${{ steps.release_drafter.outputs.tag }}
           body: |
-            ## [Release ${{ env.RELEASE_TAG }}](${{ steps.release_drafter.outputs.html_url }})
+            ## [Release ${{ steps.release_drafter.outputs.tag }}](${{ steps.release_drafter.outputs.html_url }})
             ${{ steps.release_drafter.outputs.body }}
           draft: false
 ```
