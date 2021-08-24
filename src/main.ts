@@ -121,7 +121,8 @@ function assertenv(...variables: string[]) {
 
 
 async function findPullRequests(octokit: ReturnType<typeof github.getOctokit>, head: string, base: string, label: string) {
-  const q = `repo:${process.env.GITHUB_REPOSITORY} is:pr is:open head:${head} base:${base} label:${label}`;
+  const q = `repo:${process.env.GITHUB_REPOSITORY} is:pr is:open head:${head} base:${base} label:"${label}"`;
+  core.info(`Search query: ${q}`);
   const { data } = await octokit.rest.search.issuesAndPullRequests({ q });
   return data.total_count > 0
     ? { data: { id: data.items[0].id, number: data.items[0].number }, error: false }

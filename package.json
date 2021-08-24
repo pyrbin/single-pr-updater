@@ -1,13 +1,13 @@
 {
   "name": "single-pr-updater",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "private": true,
   "main": "src/main.ts",
   "scripts": {
     "dev": "node out/index.js",
-    "build": "esbuild src/main.ts --bundle --format=cjs --platform=node --target=node12 --outfile=out/index.js",
-    "lint": "eslint . --cache",
-    "lint:fix": "eslint --fix ."
+    "build": "esbuild src/main.ts --bundle --format=cjs --platform=node --target=node12 --outfile=out/index.js --minify",
+    "lint": "eslint ./src --cache",
+    "lint:fix": "eslint ./src --fix"
   },
   "dependencies": {
     "@actions/core": "^1.5.0",
