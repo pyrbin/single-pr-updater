@@ -6,7 +6,7 @@ main();
 
 async function main() {
   try {
-    assertenv("GITHUB_TOKEN");
+    assertenv("GITHUB_TOKEN", "GITHUB_REPOSITORY");
 
     const octokit = github.getOctokit(process.env.GITHUB_TOKEN as string);
     const { owner, repo } = github.context.repo;
@@ -37,7 +37,7 @@ async function main() {
       });
 
       if (compare.total_commits <= 0) {
-        core.setFailed("No commits between base and head, cancelling operation");
+        core.info("No commits between base and head, cancelling operation");
         return;
       }
 
@@ -105,7 +105,7 @@ async function findPullRequest(
   owner: string, repo: string,
   head: string, base: string,
   label: string) {
-  const q = `repo:${repo} is:pr is:open head:${head} base:${base} label:"${label}"`;
+  const q = `repo:${process.env.GITHUB_REPOSITORY} is:pr is:open head:${head} base:${base} label:"${label}"`;
 
   core.info(`Search query: ${q}`);
   const { data } = await octokit.rest.search.issuesAndPullRequests({ q });
