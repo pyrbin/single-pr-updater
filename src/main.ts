@@ -22,14 +22,14 @@ async function main() {
 
     core.debug(`Inputs: ${inspect(inputs)}`);
 
-    const { data, error } = await findPullRequests(octokit, inputs.head, inputs.base, inputs.label);
+    const { data, error } = await findPullRequest(octokit, owner, repo, inputs.head, inputs.base, inputs.label);
 
     core.info(error
       ? "Didn't find existing pull request, creating new."
       : "Found existing pull request, updating");
 
     if (error) {
-      /** Only update if there is any changes */
+      /** Only create if there is any changes */
       const { data: compare } = await octokit.rest.repos.compareCommitsWithBasehead({
         owner,
         repo,
@@ -37,27 +37,7 @@ async function main() {
       });
 
       if (compare.total_commits <= 0) {
-        /** Check if a singleton PR was merged with this commit */
-        const { data: prList } = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
-          owner,
-          repo,
-          commit_sha: github.context.sha,
-        });
-
-        const prs = prList.filter(x =>
-          x.state === "closed" &&
-          x.labels.find(l => l.name === inputs.label) &&
-          x.head.ref.replace(/^refs\/heads\//, "") === inputs.head &&
-          x.base.ref.replace(/^refs\/heads\//, "") === inputs.base);
-
-        if (prs.length <= 0 || prs[0]?.number == undefined) {
-          core.info("No commits between base and head, cancelling operation");
-        } else {
-          core.info("Found singleton PR merged in request.");
-          core.setOutput("id", prs[0].id);
-          core.setOutput("number", prs[0].number);
-        }
-
+        core.setFailed("No commits between base and head, cancelling operation");
         return;
       }
 
@@ -120,11 +100,40 @@ function assertenv(...variables: string[]) {
 }
 
 
-async function findPullRequests(octokit: ReturnType<typeof github.getOctokit>, head: string, base: string, label: string) {
-  const q = `repo:${process.env.GITHUB_REPOSITORY} is:pr is:open head:${head} base:${base} label:"${label}"`;
+async function findPullRequest(
+  octokit: ReturnType<typeof github.getOctokit>,
+  owner: string, repo: string,
+  head: string, base: string,
+  label: string) {
+  const q = `repo:${repo} is:pr is:open head:${head} base:${base} label:"${label}"`;
+
   core.info(`Search query: ${q}`);
   const { data } = await octokit.rest.search.issuesAndPullRequests({ q });
-  return data.total_count > 0
-    ? { data: { id: data.items[0].id, number: data.items[0].number }, error: false }
-    : { data: { id: undefined, number: undefined }, error: true };
+
+  if (data.total_count <= 0) {
+    /** Check if a singleton PR was merged with this commit */
+    const { data: prList } = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
+      owner,
+      repo,
+      commit_sha: github.context.sha,
+    });
+
+    const prs = prList.filter(x =>
+      x.state === "closed" &&
+      x.labels.find(l => l.name === label) &&
+      x.head.ref.replace(/^refs\/heads\//, "") === head &&
+      x.base.ref.replace(/^refs\/heads\//, "") === base);
+
+    return prs.length > 0 && prs[0]?.number !== undefined
+      ? { data: { id: prs[0].id, number: prs[0].number }, error: false }
+      : { data: { id: undefined, number: undefined }, error: true };
+  }
+
+  return {
+    data: {
+      id: data.items[0].id,
+      number: data.items[0].number
+    },
+    error: false
+  };
 }
